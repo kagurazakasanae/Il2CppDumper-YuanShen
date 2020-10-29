@@ -149,7 +149,7 @@ namespace Il2CppDumper
             if (!stringCache.TryGetValue(index, out var result))
             {
                 //result = ReadStringToNull(header.stringOffset + index);
-                result = ReadStringToNull(0x9031b0 + index);
+                result = ReadStringToNull(0x9032D0 + index);
                 stringCache.Add(index, result);
             }
             return result;
