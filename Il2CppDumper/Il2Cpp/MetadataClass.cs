@@ -176,14 +176,14 @@ namespace Il2CppDumper
 
         public uint padding35;  //0xf0
         public uint padding36;
-        public uint padding37;
-        public uint padding38;
+        public uint metadataUsagePairsOffset;
+        public int metadataUsagePairsCount;
         public uint padding39;  //0x100
         public uint padding40;
         public uint padding41;
         public uint padding42;
-        public uint padding43;  //0x110
-        public uint padding44;
+        public uint fieldRefsOffset;  //0x110
+        public int fieldRefsCount;
 
         public uint eventsOffset; // 0x118
         public int eventsCount;
@@ -195,6 +195,13 @@ namespace Il2CppDumper
         public int parameterDefaultValuesCount;
         public uint fieldDefaultValuesOffset; // 0x138
         public int fieldDefaultValuesCount;
+
+        public uint padding45; // 0x140
+        public uint padding46;
+        public uint padding47;
+        public uint padding48;
+        public uint metadataUsageListsOffset; // 0x150
+        public int metadataUsageListsCount;
     }
 
     public class Il2CppImageDefinition
@@ -455,8 +462,8 @@ namespace Il2CppDumper
 
     public class Il2CppStringLiteral
     {
-        public uint length;
         public int dataIndex;
+        public uint length;
     }
 
     public class Il2CppParameterDefaultValue
