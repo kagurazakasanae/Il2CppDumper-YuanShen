@@ -38,6 +38,8 @@ namespace Il2CppDumper
         private Dictionary<uint, string> stringCache = new Dictionary<uint, string>();
         public ulong Address;
 
+        private byte[] stringDecryptionBlob = null;
+
         public Metadata(Stream stream) : base(stream)
         {
             /*var sanity = ReadUInt32();
@@ -54,6 +56,7 @@ namespace Il2CppDumper
             Version = 24;
             header = ReadClass<Il2CppGlobalMetadataHeader>(0);
 
+            stringDecryptionBlob = File.ReadAllBytes("D:\\genshinimpactre\\decryption_blob.bin");
 
             /*if (version == 24)
             {
@@ -88,16 +91,16 @@ namespace Il2CppDumper
             genericParameters = ReadMetadataClassArray<Il2CppGenericParameter>(header.genericParametersOffset, header.genericParametersCount);
             constraintIndices = ReadClassArray<int>(header.genericParameterConstraintsOffset, header.genericParameterConstraintsCount / 4);
             vtableMethods = ReadClassArray<uint>(header.vtableMethodsOffset, header.vtableMethodsCount / 4);
-            /*if (Version > 16 && Version < 27) //TODO
+            if (Version > 16 && Version < 27) //TODO
             {
-                stringLiterals = ReadMetadataClassArray<Il2CppStringLiteral>(header.stringLiteralOffset, header.stringLiteralCount);
+                stringLiterals = ReadMetadataClassArray<Il2CppStringLiteral>(0xAADE4, (int)header.genericContainersOffset - 0xAADE4); // see notes for how to get this
                 metadataUsageLists = ReadMetadataClassArray<Il2CppMetadataUsageList>(header.metadataUsageListsOffset, header.metadataUsageListsCount);
                 metadataUsagePairs = ReadMetadataClassArray<Il2CppMetadataUsagePair>(header.metadataUsagePairsOffset, header.metadataUsagePairsCount);
 
                 ProcessingMetadataUsage();
 
                 fieldRefs = ReadMetadataClassArray<Il2CppFieldRef>(header.fieldRefsOffset, header.fieldRefsCount);
-            }*/
+            }
             if (Version > 20)
             {
                 attributeTypeRanges = ReadMetadataClassArray<Il2CppCustomAttributeTypeRange>(header.attributesInfoOffset, header.attributesInfoCount);
@@ -183,10 +186,18 @@ namespace Il2CppDumper
 
         public string GetStringLiteralFromIndex(uint index)
         {
-            /*var stringLiteral = stringLiterals[index];
-            Position = (uint)(header.stringLiteralDataOffset + stringLiteral.dataIndex);
-            return Encoding.UTF8.GetString(ReadBytes((int)stringLiteral.length));*/
-            return "LiteralDummyString";
+            var stringLiteral = stringLiterals[index];
+            Position = (ulong)(SizeOf(typeof(Il2CppGlobalMetadataHeader)) + stringLiteral.dataIndex);
+
+            var buffer = ReadBytes((int)stringLiteral.length);
+            for (var i = 0; i < stringLiteral.length; i++)
+            {
+                byte cl = (byte)(buffer[i] ^ stringDecryptionBlob[(0x1400 + i) % 0x5000]);
+                byte al = (byte)(stringDecryptionBlob[i % 0x2800 + index % 0x2800] + i);
+                buffer[i] = (byte)(cl ^ al);
+            }
+
+            return Encoding.UTF8.GetString(buffer);
         }
 
         private void ProcessingMetadataUsage()
