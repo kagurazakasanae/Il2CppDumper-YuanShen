@@ -228,8 +228,8 @@ namespace Il2CppDumper
                         }
                     }
                     Console.WriteLine("baseadr: 0x" + baseaddr.ToString("x2"));
-                    var codeRegistration = baseaddr + 0x615E710;
-                    var metadataRegistration = baseaddr + 0x615EAF0;
+                    var codeRegistration = baseaddr + 0x72A0810;
+                    var metadataRegistration = baseaddr + 0x7FBF040;
                     il2Cpp.Init(codeRegistration, metadataRegistration);
                     return true;
                 }
