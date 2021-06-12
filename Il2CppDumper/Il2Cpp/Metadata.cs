@@ -93,7 +93,7 @@ namespace Il2CppDumper
             vtableMethods = ReadClassArray<uint>(header.vtableMethodsOffset, header.vtableMethodsCount / 4);
             if (Version > 16 && Version < 27) //TODO
             {
-                stringLiterals = ReadMetadataClassArray<Il2CppStringLiteral>(0xB3C54, (int)header.genericContainersOffset - 0xB3C54); // see notes for how to get this
+                stringLiterals = ReadMetadataClassArray<Il2CppStringLiteral>(0xC7F2C, (int)header.genericContainersOffset - 0xC7F2C); // see notes for how to get this
                 metadataUsageLists = ReadMetadataClassArray<Il2CppMetadataUsageList>(header.metadataUsageListsOffset, header.metadataUsageListsCount);
                 metadataUsagePairs = ReadMetadataClassArray<Il2CppMetadataUsagePair>(header.metadataUsagePairsOffset, header.metadataUsagePairsCount);
 
@@ -152,7 +152,7 @@ namespace Il2CppDumper
             if (!stringCache.TryGetValue(index, out var result))
             {
                 //result = ReadStringToNull(header.stringOffset + index);
-                result = ReadStringToNull(0x9CEB8C + index);
+                result = ReadStringToNull(0xBD494C + index);
                 stringCache.Add(index, result);
             }
             return result;
